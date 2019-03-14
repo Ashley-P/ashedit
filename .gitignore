@@ -1,0 +1,15 @@
+# Ignore object files and the obj directory
+src/obj/*.o
+
+# Vim swap files
+*.swp
+*.swo
+
+# Test Executables
+*.exe
+
+# Powershell scripts
+*.ps1
+
+# Logging files
+bin/logs/*.log
