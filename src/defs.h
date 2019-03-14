@@ -10,4 +10,15 @@
 #define SCREENWIDTH  50
 #define SCREENHEIGHT 30
 
+enum ControlState {
+    CS_NULL      = 0,
+    CS_EDIT      = 0x1,
+    CS_COMMAND   = 0x2,
+};
+
+// Extern Variables
+extern HANDLE    stdin;
+extern HANDLE    console;
+extern CHAR_INFO *screen;
+
 #endif

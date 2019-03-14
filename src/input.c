@@ -1,26 +1,31 @@
-void event_handler() {
-    unsigned long ul_evread;
-    INPUT_RECORD ir_inpbuf[256];
+#include <windows.h>
+#include "defs.h"
 
-    ReadConsoleInput(h_stdin,
-                     ir_inpbuf,
+// Prototype
+void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state);
+
+
+void event_handler(enum ControlState state) {
+    unsigned long evread;
+    INPUT_RECORD inpbuf[256];
+
+    ReadConsoleInput(stdin,
+                     inpbuf,
                      256,
-                     &ul_evread);
+                     &evread);
 
-    for(int i = 0; i < ul_evread; i++) {
-        switch (ir_inpbuf[i].EventType) {
+    for(int i = 0; i < evread; i++) {
+        switch (inpbuf[i].EventType) {
             case KEY_EVENT:
                 /* Pass the key event to handle_keys where it gets interpreted based on the program state */
-                handle_keys(ir_inpbuf[i].Event.KeyEvent);
+                handle_keys(inpbuf[i].Event.KeyEvent, state);
 
             case MOUSE_EVENT: case WINDOW_BUFFER_SIZE_EVENT: case FOCUS_EVENT: case MENU_EVENT:
                 // Ignore these
                 break;
         }
     }
-
-    return 0;
 }
 
-handle_keys(KEY_EVENT_RECORD kev) {
+void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
 }

@@ -1,10 +1,12 @@
 #include <windows.h>
 #include "defs.h"
+#include "input.h"
 
 HANDLE    stdin;
 HANDLE    console;
 CHAR_INFO *screen;
 
+void edit();
 
 
 int main() {
@@ -27,9 +29,16 @@ int main() {
     SetConsoleMode(console, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
     SetConsoleMode(stdin, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
     SetConsoleCursorInfo(console, &CURSORINFO); 
+
+    edit();
 }
 
 // Main loop in here
-void prog() {
-    event_handler()
+void edit() {
+    enum ControlState control_state = CS_EDIT;
+    int done = 0;
+
+    while (!done) {
+        event_handler(control_state);
+    }
 }
