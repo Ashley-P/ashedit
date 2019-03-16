@@ -1,5 +1,7 @@
 #include <windows.h>
+#include "commands.h"
 #include "defs.h"
+#include "text.h"
 
 // Prototype
 void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state);
@@ -34,6 +36,15 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
     // If statements allow for fall through
     // Shared Presses
     if (state & (CS_EDIT | CS_COMMAND)) {
+        switch (kev.wVirtualKeyCode) {
+            case 0x30 ... 0x39: // Numbers [0-9]
+            case 0x41 ... 0x5A: // Letters [a-z]
+            case 0xBA ... 0xC0: // Other
+            case 0xDB ... 0xDF: // Other
+            case VK_SPACE:
+            case 0xE2:          // Backslash
+                insert_char(get_active_buffer(), kev.uChar.UnicodeChar);
+        }
     }
 
     // Edit Mode specific things

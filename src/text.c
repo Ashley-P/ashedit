@@ -34,8 +34,11 @@ void draw_ui() {
         struct Buffer *buf = win->buffer;
         if (win->x == 0)
             x_offset = 0;
-        else
+        else {
+            // Draw the vertical bar that would seperate the window
+            draw_char_line(win->x, win->y, LIGHT_HORIZONTAL, win->height, 0x70, DIR_H);
             x_offset = 1;
+        }
 
         // Drawing each line of text
         // -1 because the bottom bar is part of the window
@@ -43,8 +46,7 @@ void draw_ui() {
         for (j = 0; j < win->height - 1; j++) {
             // Start from the offset
             if ((j + win->text_offset) >= buf->y_len) break;
-            change_colours(win->x + x_offset, win->y + j, win->width, 0x87, DIR_H);
-            draw_chars(win->x + x_offset, win->y + j, *(buf->ch_array + win->text_offset + j), + 0x87);
+            draw_chars(win->x + x_offset, win->y + j, *(buf->ch_array + win->text_offset + j), + 0x07);
         }
 
         // Draw Tildes on the rest of the window
@@ -59,6 +61,19 @@ void draw_ui() {
         else
             draw_chars(win->x, win->y + win->height, buf->fn_relative, 0x70);
     }
+
+
+    // Draw the cursor wherever it's supposed to be
+    struct Window *win = active_win;
+    struct Buffer *buf = win->buffer;
+
+    if (win->x == 0)
+        x_offset = 0;
+    else
+        x_offset = 1;
+
+    //if ((buf->ch_array)[curs_y][curs_x])
+    change_colours(win->x + buf->curs_x + x_offset, win->y + buf->curs_y, 1, 0x78, DIR_H);
 }
 
 void redraw_screen() {
@@ -164,7 +179,9 @@ struct Window *init_window(struct Buffer *buf, int direction) {
     return win;
 }
 
-void deinit_window(struct Window *win);
+void deinit_window(struct Window *win) {
+    free(win);
+}
 
 struct Window *get_active_window() {
     return active_win;
