@@ -44,15 +44,36 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
             case VK_SPACE:
             case 0xE2:          // Backslash
                 insert_char(get_active_buffer(), kev.uChar.UnicodeChar);
+                return;
         }
     }
 
     // Edit Mode specific things
     if (state == CS_EDIT) {
+        switch (kev.wVirtualKeyCode) {
+            case VK_BACK:
+                delete_char(get_active_buffer());
+                return;
+            case VK_RETURN:
+                new_line(get_active_buffer());
+                return;
+            case VK_LEFT:
+            case VK_RIGHT: return;
+            case VK_UP: return;
+            case VK_DOWN: return;
+        }
     }
 
     // Command Mode specific things
     if (state == CS_COMMAND) {
+        switch (kev.wVirtualKeyCode) {
+            case VK_BACK: return;
+            case VK_RETURN: return;
+            case VK_LEFT: return;
+            case VK_RIGHT: return;
+            case VK_UP: return;
+            case VK_DOWN: return;
+        }
     }
 
     // Other stuff

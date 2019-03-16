@@ -13,6 +13,37 @@ int power(int base, unsigned int expt) {
     return base;
 }
 
+// Shift pointers down an array
+void shift_pointers_right(void **ptr, size_t sz, int shift_len, int shift_pos) {
+    // Free up the pointers that will be overwritten
+    for (int i = 0; i < shift_len; i++)
+        free(*(ptr + sz - 1 - i));
+
+    for (int i = sz; i > shift_pos; i--) {
+        if (i + shift_len >= sz) continue;
+        else *(ptr + i + shift_len) = *(ptr + i);
+    }
+
+    // Making sure the space created has NULL pointers
+    for (int i = 0; i < shift_len; i++)
+        *(ptr + i + shift_pos) = NULL;
+}
+
+void shift_pointers_left(void **ptr, size_t sz, int shift_len, int shift_pos) {
+    // Free up the pointers that will be overwritten
+    for (int i = 0; i < shift_len; i++)
+        free(*(ptr + shift_pos - i));
+
+    for (int i = shift_pos; i < sz; i++) {
+        if (i - shift_len <= 0) continue;
+        else *(ptr + i - shift_len) = *(ptr + i);
+    }
+
+    // Making sure the pointers at the end are NULL
+    for (int i = 0; i < shift_len; i++)
+        *(ptr + sz - 1 - i) = NULL;
+}
+
 /********* String utility functions *********/
 /**
  * wchar_t string comparing
