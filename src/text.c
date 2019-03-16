@@ -39,11 +39,18 @@ void draw_ui() {
 
         // Drawing each line of text
         // -1 because the bottom bar is part of the window
-        for (int j = 0; j < win->height - 1; j++) {
+        int j;
+        for (j = 0; j < win->height - 1; j++) {
             // Start from the offset
             if ((j + win->text_offset) >= buf->y_len) break;
-            draw_chars(win->x + x_offset, win->y + j, *(buf->ch_array + win->text_offset + j), + 0x07);
+            change_colours(win->x + x_offset, win->y + j, win->width, 0x87, DIR_H);
+            draw_chars(win->x + x_offset, win->y + j, *(buf->ch_array + win->text_offset + j), + 0x87);
         }
+
+        // Draw Tildes on the rest of the window
+        for (; j < win->height; j++)
+            draw_char(win->x + x_offset, win->y + j, L'~', 0x07);
+
 
         // Drawing the bottom border of the window
         change_colours(win->x, win->y + win->height, win->width, 0x70, DIR_H);
