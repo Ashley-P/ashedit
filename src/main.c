@@ -1,6 +1,6 @@
 #include "defs.h"
 #include "input.h"
-#include "ui.h"
+#include "text.h"
 
 HANDLE    h_stdin;
 HANDLE    console;
@@ -33,8 +33,16 @@ void console_init() {
 int main() {
     console_init();
 
+    // Some other initialisation
     enum ControlState control_state = CS_EDIT;
     isRunning = 1;
+
+    init_lists();
+
+    // Setting up the very first buffer
+    struct Buffer *buf = init_buffer(NULL);
+    init_window(buf, 0); // The second arg doesn't matter
+
 
     while (isRunning) {
         redraw_screen();

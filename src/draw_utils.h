@@ -1,8 +1,6 @@
 #ifndef DRAW_UTILS_H
 #define DRAW_UTILS_H
 
-#include "defs.h"
-
 
 void clear_screen();
 void draw_char(int x, int y, wchar_t character, unsigned char colour);

@@ -51,12 +51,11 @@ enum ControlState {
  * Struct for handling the buffer
  * Has a pointer to the 2d array that the actual text will be on
  * Has both filenames because I'm not sure if I need only one of them
- * Positional stuff so it can be on the screen with other buffers
  * Also contains where the cursor should be if it is the active buffer
  */
 struct Buffer {
     // Pointer to the character array that will be typed to
-    wchar_t ***ch_array;
+    wchar_t **ch_array;
 
     
     // Max length of a string in the buffer
@@ -71,19 +70,26 @@ struct Buffer {
     wchar_t fn_absolute[MAX_BUFSIZE_LARGE];
     FILE *handle;
 
+
+    // Cursor stuff
+    int curs_x;
+    int curs_y;
+};
+
+/**
+ * This is for helping to display buffers since you can/should be able to have
+ * more buffers than you can display on screen
+ */
+struct Window {
     // Position and size stuff
     int x;
     int y;
     int width;
     int height;
 
-    // Cursor stuff
-    int curs_x;
-    int curs_y;
-
-    int active;
+    // The buffer that should be displayed
+    struct Buffer *buffer;
 };
-
 
 /**
  * A struct for the command line at the bottom
