@@ -29,24 +29,3 @@ void line_check(struct Buffer *buf, int lines_wanted) {
         buf->y_len_true += MAX_BUFSIZE_TINY;
     }
 }
-
-void insert_char(struct Buffer *buf, wchar_t character) {
-    w_shift_chars_right(*(buf->ch_array + buf->curs_y), buf->x_len_max, 1, buf->curs_x);
-    *(*(buf->ch_array + buf->curs_y) + buf->curs_x) = character;
-    buf->curs_x++;
-}
-
-void delete_char(struct Buffer *buf) {
-    w_shift_chars_left(*(buf->ch_array + buf->curs_y), buf->x_len_max, 1, buf->curs_x);
-    buf->curs_x--;
-}
-
-// Puts whatever to the right of the cursor on the next line
-void new_line(struct Buffer *buf) {
-    line_check(buf, 1);
-    shift_pointers_right(buf->ch_array, buf->y_len_true, 1, buf->curs_y + 1);
-    *(buf->ch_array + buf->curs_y + 1) = calloc(buf->x_len_max, sizeof(wchar_t));
-    buf->y_len++;
-    buf->curs_y++;
-    buf->curs_x = 0;
-}
