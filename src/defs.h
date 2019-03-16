@@ -74,6 +74,7 @@ struct Buffer {
     // Cursor stuff
     int curs_x;
     int curs_y;
+
 };
 
 /**
@@ -89,6 +90,9 @@ struct Window {
 
     // The buffer that should be displayed
     struct Buffer *buffer;
+
+    // the offset at which we should be viewing the text
+    int text_offset;
 };
 
 /**

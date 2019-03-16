@@ -29,3 +29,14 @@ void draw_char_line(int x, int y, wchar_t character, int len, unsigned char colo
         for (int i = 0; i < len; i++)
             draw_char(x, y + i, character, colour);
 }
+
+// Changes the colours without changing the text
+void change_colours(int x, int y, int len, unsigned char colour, int direction) {
+    if (direction == DIR_H)
+        for (int i = 0; i < len; i++)
+            (screen + x + i + (y * SCREENWIDTH))->Attributes = colour;
+    
+    else
+        for (int i = 0; i < len; i++)
+            (screen + x + ((y + i) * SCREENWIDTH))->Attributes = colour;
+}
