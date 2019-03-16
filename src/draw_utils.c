@@ -1,6 +1,6 @@
 #include "defs.h"
 
-void clear_screen(CHAR_INFO *screen) {
+void clear_screen() {
     // Set the screen to blank spaces
     for (int i = 0; i < SCREENWIDTH * SCREENHEIGHT; i++) {
         (screen + i)->Char.UnicodeChar = L' ';

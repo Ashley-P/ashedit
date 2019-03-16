@@ -7,7 +7,7 @@ void draw_ui() {
 }
 
 void redraw_screen() {
-    clear_screen(screen);
+    clear_screen();
     draw_ui();
 
     WriteConsoleOutputW(console,
