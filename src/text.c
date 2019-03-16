@@ -41,9 +41,8 @@ void draw_ui() {
         }
 
         // Drawing each line of text
-        // -1 because the bottom bar is part of the window
         int j;
-        for (j = 0; j < win->height - 1; j++) {
+        for (j = 0; j < win->height; j++) {
             // Start from the offset
             if ((j + win->text_offset) >= buf->y_len) break;
             draw_chars(win->x + x_offset, win->y + j, *(buf->ch_array + win->text_offset + j), + 0x07);
