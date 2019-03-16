@@ -12,6 +12,9 @@
 #define SCREENWIDTH  100
 #define SCREENHEIGHT 30
 
+#define DIR_H 1
+#define DIR_V 2
+
 enum ControlState {
     CS_NULL      = 0,
     CS_EDIT      = 0x1,

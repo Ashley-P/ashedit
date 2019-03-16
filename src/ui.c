@@ -3,7 +3,6 @@
 
 
 void draw_ui() {
-    (screen + 1)->Char.UnicodeChar = L'A';
 }
 
 void redraw_screen() {
