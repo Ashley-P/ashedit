@@ -2,9 +2,7 @@
 #include "input.h"
 #include "ui.h"
 
-void edit();
-
-HANDLE    stdin;
+HANDLE    h_stdin;
 HANDLE    console;
 CHAR_INFO *screen;
 int isRunning;
@@ -13,7 +11,7 @@ void console_init() {
     FreeConsole();
     AllocConsole();
 
-    stdin = GetStdHandle(STD_INPUT_HANDLE);
+    h_stdin = GetStdHandle(STD_INPUT_HANDLE);
     console = CreateConsoleScreenBuffer(GENERIC_READ | GENERIC_WRITE,
                                         0,
                                         NULL,
@@ -27,7 +25,7 @@ void console_init() {
     SetConsoleActiveScreenBuffer(console);
     SetConsoleWindowInfo(console, TRUE, &SMALLRECTsize);
     SetConsoleMode(console, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
-    SetConsoleMode(stdin, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
+    SetConsoleMode(h_stdin, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
     SetConsoleCursorInfo(console, &CURSORINFO); 
 }
 

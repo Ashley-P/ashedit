@@ -1,8 +1,8 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <wchar.h>
-#include "draw_utils.h"
-#include "utils.h" // defs.h is included in here
+#include "defs.h"
+#include "utils.h"
 
 
 int power(int base, unsigned int expt) {

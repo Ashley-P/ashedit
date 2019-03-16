@@ -1,7 +1,6 @@
 #ifndef UTILS_H
 #define UTILS_H
 
-#include "defs.h"
 
 /* Externs */
 int power(int base, unsigned int expt);

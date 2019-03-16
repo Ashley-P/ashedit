@@ -9,7 +9,7 @@ void event_handler(enum ControlState state) {
     unsigned long evread;
     INPUT_RECORD inpbuf[256];
 
-    ReadConsoleInput(stdin,
+    ReadConsoleInput(h_stdin,
                      inpbuf,
                      256,
                      &evread);
