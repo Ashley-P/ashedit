@@ -1,15 +1,15 @@
-#include <windows.h>
 #include "defs.h"
 #include "input.h"
+#include "ui.h"
+
+void edit();
 
 HANDLE    stdin;
 HANDLE    console;
 CHAR_INFO *screen;
+int isRunning;
 
-void edit();
-
-
-int main() {
+void console_init() {
     FreeConsole();
     AllocConsole();
 
@@ -29,16 +29,17 @@ int main() {
     SetConsoleMode(console, ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
     SetConsoleMode(stdin, ENABLE_EXTENDED_FLAGS | ENABLE_WINDOW_INPUT | ENABLE_MOUSE_INPUT);
     SetConsoleCursorInfo(console, &CURSORINFO); 
-
-    edit();
 }
 
 // Main loop in here
-void edit() {
-    enum ControlState control_state = CS_EDIT;
-    int done = 0;
+int main() {
+    console_init();
 
-    while (!done) {
+    enum ControlState control_state = CS_EDIT;
+    isRunning = 1;
+
+    while (isRunning) {
+        redraw_screen();
         event_handler(control_state);
     }
 }

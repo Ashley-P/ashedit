@@ -28,4 +28,25 @@ void event_handler(enum ControlState state) {
 }
 
 void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
+    // Immediate return if it's not a press
+    if (!kev.bKeyDown) return;
+
+    // If statements allow for fall through
+    // Shared Presses
+    if (state & (CS_EDIT | CS_COMMAND)) {
+    }
+
+    // Edit Mode specific things
+    if (state == CS_EDIT) {
+    }
+
+    // Command Mode specific things
+    if (state == CS_COMMAND) {
+    }
+
+    // Other stuff
+    switch (kev.wVirtualKeyCode) {
+        case VK_ESCAPE: isRunning = 0; return;
+        default: return;
+    }
 }
