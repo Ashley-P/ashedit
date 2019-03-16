@@ -15,6 +15,13 @@
 #define DIR_H 1
 #define DIR_V 2
 
+#define MAX_BUFSIZE_TINY  16
+#define MAX_BUFSIZE_MINI  64
+#define MAX_BUFSIZE_SMALL 256
+#define MAX_BUFSIZE_MED   1024 
+#define MAX_BUFSIZE_LARGE 2048
+#define MAX_BUFSIZE_SUPER 100000
+
 enum ControlState {
     CS_NULL      = 0,
     CS_EDIT      = 0x1,
