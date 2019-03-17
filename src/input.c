@@ -2,6 +2,7 @@
 #include "commands.h"
 #include "defs.h"
 #include "text.h"
+#include "utils.h"
 
 // Prototype
 void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state);
@@ -44,7 +45,9 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
             case 0xDB ... 0xDF: // Other
             case VK_SPACE:
             case 0xE2:          // Backslash
-                //insert_char(buf, kev.uChar.UnicodeChar);
+                // @NOTE : Implement Line wrapping
+                insert_char(buf, buf->curs_x, buf->curs_y, kev.uChar.UnicodeChar);
+                buf->curs_x++;
                 return;
         }
     }
@@ -54,8 +57,23 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
         struct Buffer *buf = get_active_buffer();
         switch (kev.wVirtualKeyCode) {
             case VK_BACK:
+                if (buf->curs_x == 0 && buf->curs_y == 0) return;
+                else if (buf->curs_x == 0) {
+                    w_string_cat(*(buf->ch_array + buf->curs_y), *(buf->ch_array + buf->curs_y - 1),
+                            buf->x_len_max, buf->x_len_max);
+                    delete_line(buf, buf->curs_y);
+                    buf->curs_y--;
+                    buf->curs_x = w_string_len(*(buf->ch_array + buf->curs_y));
+                } else {
+                    delete_char(buf, buf->curs_x, buf->curs_y); 
+                    buf->curs_x--;
+                }
                 return;
             case VK_RETURN:
+                insert_line(buf, buf->curs_y);
+                // Line split would go here
+                buf->curs_x = 0;
+                buf->curs_y++;
                 return;
             case VK_LEFT:
                 return;

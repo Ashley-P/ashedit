@@ -49,6 +49,8 @@ void shift_pointers_left(void **ptr, size_t sz, int shift_len, int shift_pos) {
  * wchar_t string comparing
  * Requires null-terminated strings
  */
+
+
 int w_string_cmp(const wchar_t *a, const wchar_t *b) {
     for (int i = 0;; i++) {
         if (*(a + i) == L'\0' && *(b + i) == L'\0') {
@@ -94,11 +96,33 @@ void w_string_cpy(const wchar_t *src, wchar_t *dest) {
  */
 int w_string_len(const wchar_t *str) {
     int i = 0;
-    while (*(str + i) != L'\0') {
+    while (*(str + i) != L'\0' && *(str + i) != L'\n') {
         i++;
     }
 
     return i;
+}
+
+/**
+ * This functions moves src onto the end of dest
+ * The end of dest is considered to be when the first '\0' character is found
+ * src isn't freed
+ */
+void w_string_cat(wchar_t *src, wchar_t *dest, size_t src_sz, size_t dest_sz) {
+    // Calculate size of string using w_string_len
+    int dest_len = w_string_len(dest);
+
+    for (int i = 0; i < src_sz || i + dest_len < dest_sz; i++) {
+        *(dest + i + dest_len) = *(src + i);
+        *(src + i) = L'\0';
+    }
+}
+
+void w_string_split(wchar_t *src, wchar_t *dest, size_t src_sz, size_t dest_sz, int split_pos) {
+    for (int i = 0; i + split_pos < src_sz || i < dest_sz; i++) {
+        *(dest + i) = *(src + split_pos + i);
+        *(src + split_pos + i) = L'\0';
+    }
 }
 
 void w_string_reset(wchar_t *str, size_t sz) {

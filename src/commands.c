@@ -29,3 +29,31 @@ void line_check(struct Buffer *buf, int lines_wanted) {
         buf->y_len_true += MAX_BUFSIZE_TINY;
     }
 }
+
+void insert_char(struct Buffer *buf, int posx, int posy, wchar_t character) {
+    w_shift_chars_right(*(buf->ch_array + posy), buf->x_len_max, 1, posx);
+    *(*(buf->ch_array + posy) + posx) = character;
+}
+
+void delete_char(struct Buffer *buf, int posx, int posy) {
+    w_shift_chars_left(*(buf->ch_array + posy), buf->x_len_max, 1, posx);
+}
+
+void insert_line(struct Buffer *buf, int posy) {
+    line_check(buf, 1);
+    shift_pointers_right((void **)buf->ch_array, buf->y_len_true, 1, posy + 1);
+
+    // Allocating space for the line created
+    *(buf->ch_array + posy + 1) = calloc(buf->x_len_max, sizeof(wchar_t));
+
+    buf->y_len++;
+}
+
+void delete_line(struct Buffer *buf, int posy) {
+    shift_pointers_left((void **) buf->ch_array, buf->y_len_true, 1, posy);
+
+    // Allocating space for the line created
+    *(buf->ch_array + buf->y_len_true - 1) = calloc(buf->x_len_max, sizeof(wchar_t));
+
+    buf->y_len--;
+}
