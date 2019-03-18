@@ -153,6 +153,7 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
             case VK_RETURN:
                 // Command intepreter would be called here
                 command_line->curs_x = 0;
+                command_line->curs_y = 0;
                 shift_pointers_right((void **) command_line->ch_array, command_line->y_len_true, 1, 0);
                 *command_line->ch_array = calloc(command_line->x_len_max, sizeof(wchar_t));
                 if (command_line->y_len != command_line->y_len_true - 1) command_line->y_len++;
@@ -168,11 +169,24 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
             // Scrolling through previous commands
             case VK_UP:
                 if (command_line->curs_y == command_line->y_len - 1) return;
+                w_string_reset(*command_line->ch_array, command_line->x_len_max);
                 command_line->curs_y++;
-                command_line->curs_x++;
                 w_string_cpy(*(command_line->ch_array + command_line->curs_y), *command_line->ch_array);
+                command_line->curs_x = w_string_len(*(command_line->ch_array + command_line->curs_y));
                 return;
-            case VK_DOWN: return;
+            case VK_DOWN:
+                if (command_line->curs_y == 0) return;
+                else if (command_line->curs_y == 1) {
+                    w_string_reset(*command_line->ch_array, command_line->x_len_max);
+                    command_line->curs_y--;
+                    command_line->curs_x = 0;
+                } else {
+                    w_string_reset(*command_line->ch_array, command_line->x_len_max);
+                    command_line->curs_y--;
+                    w_string_cpy(*(command_line->ch_array + command_line->curs_y), *command_line->ch_array);
+                    command_line->curs_x = w_string_len(*(command_line->ch_array + command_line->curs_y));
+                }
+                return;
         }
     }
 }

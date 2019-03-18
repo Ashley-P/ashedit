@@ -19,7 +19,7 @@ void shift_pointers_right(void **ptr, size_t sz, int shift_len, int shift_pos) {
     for (int i = 0; i < shift_len; i++)
         free(*(ptr + sz - 1 - i));
 
-    for (int i = sz; i > shift_pos; i--) {
+    for (int i = sz; i >= shift_pos; i--) {
         if (i + shift_len >= sz) continue;
         else *(ptr + i + shift_len) = *(ptr + i);
     }
