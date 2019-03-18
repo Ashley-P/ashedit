@@ -3,6 +3,7 @@
 
 void redraw_screen();
 void init_lists();
+struct Buffer *init_command_line();
 struct Buffer *init_buffer();
 void deinit_buffer(struct Buffer *buf);
 struct Window *init_window();

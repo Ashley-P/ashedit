@@ -6,6 +6,8 @@ HANDLE    h_stdin;
 HANDLE    console;
 CHAR_INFO *screen;
 int isRunning;
+struct Buffer *command_line; // Special buffer where we just don't use some of the members
+enum ControlState control_state;
 
 void console_init() {
     FreeConsole();
@@ -34,12 +36,15 @@ int main() {
     console_init();
 
     // Some other initialisation
-    enum ControlState control_state = CS_EDIT;
+    control_state = CS_EDIT;
     isRunning = 1;
 
     init_lists();
 
-    // Setting up the very first buffer
+    // Setting up the command line
+    command_line = init_command_line();
+
+    // Setting up the very first buffer and window
     struct Buffer *buf = init_buffer(NULL);
     init_window(buf, 0); // The second arg doesn't matter
 

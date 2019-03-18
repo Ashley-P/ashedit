@@ -81,8 +81,11 @@ void draw_ui() {
             draw_chars(win->x, win->y + win->height, buf->fn_relative, 0x70);
     }
 
+    // Draw the command line
+    draw_chars(0, SCREENHEIGHT - 1, *(command_line->ch_array), 0x07);
 
     // Draw the cursor wherever it's supposed to be
+    if (control_state == CS_EDIT) {
     struct Window *win = active_win;
     struct Buffer *buf = win->buffer;
 
@@ -92,7 +95,10 @@ void draw_ui() {
         x_offset = 1;
 
     //if ((buf->ch_array)[curs_y][curs_x])
-    change_colours(win->x + buf->curs_x + x_offset, win->y + buf->curs_y - win->text_offset, 1, 0x78, DIR_H);
+    change_colours(win->x + buf->curs_x + x_offset,
+            win->y + buf->curs_y - win->text_offset, 1, 0x78, DIR_H);
+    } else if (control_state == CS_COMMAND)
+        change_colours(command_line->curs_x, SCREENHEIGHT - 1, 1, 0x78, DIR_H);
 }
 
 void redraw_screen() {
@@ -114,6 +120,25 @@ void init_lists() {
     buffers = calloc(MAX_BUFSIZE_TINY, sizeof(struct Buffer *));
     windows = calloc(MAX_BUFSIZE_TINY, sizeof(struct Window *));
     active_win = NULL;
+}
+
+// Initialises the special command line buffer
+struct Buffer *init_command_line() {
+    struct Buffer *buf = malloc(sizeof(struct Buffer));
+
+    wchar_t **tmp = calloc(MAX_BUFSIZE_MINI, sizeof(wchar_t *));
+    for (int i = 0; i < MAX_BUFSIZE_TINY; i++)
+        *(tmp + i) = calloc(MAX_BUFSIZE_MINI, sizeof(wchar_t));
+
+    buf->ch_array   = tmp;
+    buf->x_len_max  = MAX_BUFSIZE_MINI;
+    buf->y_len_true = MAX_BUFSIZE_MINI;
+    buf->y_len      = 1;
+
+    buf->curs_x = 0;
+    buf->curs_y = 0;
+
+    return buf;
 }
 
 /**
@@ -141,10 +166,14 @@ struct Buffer *init_buffer(FILE *handle) {
 
     //w_string_cpy(L"\0", buf->fn_relative);
     //w_string_cpy(L"\0", buf->fn_absolute);
+    /*
     for (int i = 0; i < MAX_BUFSIZE_LARGE; i++) {
         *(buf->fn_relative + i) = L'\0';
         *(buf->fn_absolute + i) = L'\0';
     }
+    */
+    w_string_reset(buf->fn_relative, MAX_BUFSIZE_LARGE);
+    w_string_reset(buf->fn_absolute, MAX_BUFSIZE_LARGE);
     buf->handle = NULL;
 
     buf->curs_x = 0;
@@ -210,7 +239,7 @@ void set_active_window(struct Window *win) {
     active_win = win;
 }
 
-// Someone pointless since you can get the active buffer from the active window
+// Somewhat pointless since you can get the active buffer from the active window
 struct Buffer *get_active_buffer() {
     return active_win->buffer;
 }

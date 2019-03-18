@@ -43,6 +43,8 @@ enum ControlState {
     CS_NULL      = 0,
     CS_EDIT      = 0x1,
     CS_COMMAND   = 0x2,
+    
+    CS_ANY       = CS_EDIT | CS_COMMAND,
 };
 
 // Structs
@@ -75,6 +77,9 @@ struct Buffer {
     int curs_x;
     int curs_y;
 
+    // Special variable for the command line buffer, left uninitialised in normal buffers
+    int command_curs_y;
+
 };
 
 /**
@@ -95,20 +100,12 @@ struct Window {
     int text_offset;
 };
 
-/**
- * A struct for the command line at the bottom
- * Has some of the same members as a Buffer
- */
-struct CommandLine {
-    wchar_t str[MAX_BUFSIZE_LARGE];
-    int curs_y;
-    int active;
-};
-
 // Extern Variables
 extern HANDLE    h_stdin;
 extern HANDLE    console;
 extern CHAR_INFO *screen;
 extern int isRunning; // Whether the program is running or not
+extern struct Buffer *command_line;
+extern enum ControlState control_state;
 
 #endif

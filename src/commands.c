@@ -1,6 +1,6 @@
 /**
  * This file handles any and all commands for manipulating text
- * including basic things such as entering text
+ * including basic things such as entering text along with all the command line stuff
  */
 
 #include "commands.h"

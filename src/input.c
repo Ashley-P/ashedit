@@ -36,6 +36,31 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
 
     // If statements allow for fall through
     // Shared Presses
+    if (state & CS_ANY) {
+        if (kev.dwControlKeyState & LEFT_CTRL_PRESSED) {
+            switch (kev.wVirtualKeyCode) {
+                case 0x31: // '1'
+                    control_state = CS_EDIT;
+                    w_string_reset(*(command_line->ch_array), command_line->x_len_max);
+                    command_line->curs_x = 0;
+                    return;
+                case 0x32: // '2'
+                    control_state = CS_COMMAND;
+                    return;
+                case 0x33: // '3'
+                    //control_state = CS_EDIT;
+                    //w_string_reset(*(command_line->ch_array), command_line->x_len_max);
+                    return;
+            }
+        } else {
+            switch (kev.wVirtualKeyCode) {
+                case VK_ESCAPE:
+                    isRunning = 0;
+                    return;
+            }
+        }
+    }
+
     if (state & (CS_EDIT | CS_COMMAND)) {
         struct Buffer *buf = get_active_buffer();
         switch (kev.wVirtualKeyCode) {
@@ -47,8 +72,13 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
             case 0xE2:          // Backslash
                 // @NOTE : Implement Line wrapping
                 // @FIXME
-                insert_char(buf, buf->curs_x, buf->curs_y, kev.uChar.UnicodeChar);
-                buf->curs_x++;
+                if (state == CS_COMMAND) {
+                    insert_char(command_line, command_line->curs_x, 0, kev.uChar.UnicodeChar);
+                    command_line->curs_x++;
+                } else {
+                    insert_char(buf, buf->curs_x, buf->curs_y, kev.uChar.UnicodeChar);
+                    buf->curs_x++;
+                }
                 return;
         }
     }
@@ -112,18 +142,35 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
     // Command Mode specific things
     if (state == CS_COMMAND) {
         switch (kev.wVirtualKeyCode) {
-            case VK_BACK: return;
-            case VK_RETURN: return;
-            case VK_LEFT: return;
-            case VK_RIGHT: return;
-            case VK_UP: return;
+            case VK_BACK:
+                if (command_line->curs_x == 0) return;
+                else {
+                    delete_char(command_line, command_line->curs_x - 1, 0); 
+                    command_line->curs_x--;
+                }
+                return;
+            case VK_RETURN:
+                // Command intepreter would be called here
+                command_line->curs_x = 0;
+                shift_pointers_right((void **) command_line->ch_array, command_line->y_len_true, 1, 0);
+                *command_line->ch_array = calloc(command_line->x_len_max, sizeof(wchar_t));
+                if (command_line->y_len != command_line->y_len_true - 1) command_line->y_len++;
+                return;
+            case VK_LEFT:
+                if (command_line->curs_x == 0) return;
+                command_line->curs_x--;
+                return;
+            case VK_RIGHT:
+                if (command_line->curs_x == w_string_len(*command_line->ch_array)) return;
+                command_line->curs_x++;
+                return;
+            // Scrolling through previous commands
+            case VK_UP:
+                if (command_line->curs_y == command_line->y_len) return;
+                command_line->curs_y++;
+                w_string_cpy(*(command_line->ch_array + command_line->curs_y), *command_line->ch_array);
+                return;
             case VK_DOWN: return;
         }
-    }
-
-    // Other stuff
-    switch (kev.wVirtualKeyCode) {
-        case VK_ESCAPE: isRunning = 0; return;
-        default: return;
     }
 }
