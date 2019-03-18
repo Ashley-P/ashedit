@@ -19,11 +19,31 @@ size_t w_len;
 struct Window *active_win;
 
 /**
+ * Checks and modifies text_offset in each window depending on what curs_y is and the
+ * size of the window
+ */
+void text_offset_check() {
+    for (int i = 0; i < w_len; i++) {
+        struct Window *win = *(windows + i);
+        struct Buffer *buf = win->buffer;
+
+        if (buf->curs_y < win->text_offset) {
+            if (buf->curs_y == 0)
+                win->text_offset = 0;
+            else
+                win->text_offset = buf->curs_y - 1;
+        } else if (buf->curs_y > win->text_offset + win->height - 1)
+            win->text_offset = buf->curs_y - win->height + 1;
+    }
+}
+
+/**
  * @NOTE : Implement Line numbering
  * @NOTE : Implement Line wrapping
  */
 void draw_ui() {
     // Bottom row is for typing commands so it's left blank
+    text_offset_check();
 
     // Each window has a bottom bar and a left bar
     // There is no left bar if the win->x is 0
@@ -72,7 +92,7 @@ void draw_ui() {
         x_offset = 1;
 
     //if ((buf->ch_array)[curs_y][curs_x])
-    change_colours(win->x + buf->curs_x + x_offset, win->y + buf->curs_y, 1, 0x78, DIR_H);
+    change_colours(win->x + buf->curs_x + x_offset, win->y + buf->curs_y - win->text_offset, 1, 0x78, DIR_H);
 }
 
 void redraw_screen() {
@@ -158,7 +178,6 @@ void deinit_buffer(struct Buffer *buf) {
  */
 struct Window *init_window(struct Buffer *buf, int direction) {
     struct Window *win = malloc(sizeof(struct Window));
-    // Get the active window and split it in half
 
     // If active_win is NULL then it's likely to be the first window that is created
     if (!active_win) {
@@ -169,6 +188,7 @@ struct Window *init_window(struct Buffer *buf, int direction) {
         win->height      = SCREENHEIGHT - 2;
         win->buffer      = buf;
         win->text_offset = 0;
+    } else {
     }
 
     // Add the window to the list

@@ -93,7 +93,6 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
                     buf->curs_y++;
                 } else
                     buf->curs_x++;
-
                 return;
             case VK_UP:
                 if (buf->curs_y == 0) return;
