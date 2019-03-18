@@ -46,6 +46,7 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
             case VK_SPACE:
             case 0xE2:          // Backslash
                 // @NOTE : Implement Line wrapping
+                // @FIXME
                 insert_char(buf, buf->curs_x, buf->curs_y, kev.uChar.UnicodeChar);
                 buf->curs_x++;
                 return;
@@ -59,27 +60,53 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
             case VK_BACK:
                 if (buf->curs_x == 0 && buf->curs_y == 0) return;
                 else if (buf->curs_x == 0) {
+                    buf->curs_x = w_string_len(*(buf->ch_array + buf->curs_y - 1));
                     w_string_cat(*(buf->ch_array + buf->curs_y), *(buf->ch_array + buf->curs_y - 1),
                             buf->x_len_max, buf->x_len_max);
                     delete_line(buf, buf->curs_y);
                     buf->curs_y--;
-                    buf->curs_x = w_string_len(*(buf->ch_array + buf->curs_y));
                 } else {
-                    delete_char(buf, buf->curs_x, buf->curs_y); 
+                    delete_char(buf, buf->curs_x - 1, buf->curs_y); 
                     buf->curs_x--;
                 }
                 return;
             case VK_RETURN:
                 insert_line(buf, buf->curs_y);
-                // Line split would go here
+                w_string_split(*(buf->ch_array + buf->curs_y), *(buf->ch_array + buf->curs_y + 1),
+                        buf->x_len_max, buf->x_len_max, buf->curs_x);
                 buf->curs_x = 0;
                 buf->curs_y++;
                 return;
             case VK_LEFT:
+                if (buf->curs_x == 0 && buf->curs_y == 0) return;
+                else if (buf->curs_x == 0) {
+                    buf->curs_y--;
+                    buf->curs_x = w_string_len(*(buf->ch_array + buf->curs_y));
+                } else
+                    buf->curs_x--;
                 return;
-            case VK_RIGHT: return;
-            case VK_UP: return;
-            case VK_DOWN: return;
+            case VK_RIGHT:
+                if (buf->curs_x == w_string_len(*(buf->ch_array + buf->curs_y))
+                        && buf->curs_y == buf->y_len - 1) return;
+                else if (buf->curs_x == w_string_len(*(buf->ch_array + buf->curs_y))) {
+                    buf->curs_x = 0;
+                    buf->curs_y++;
+                } else
+                    buf->curs_x++;
+
+                return;
+            case VK_UP:
+                if (buf->curs_y == 0) return;
+                if (buf->curs_x > w_string_len(*(buf->ch_array + buf->curs_y - 1)))
+                    buf->curs_x = w_string_len(*(buf->ch_array + buf->curs_y - 1));
+                buf->curs_y--;
+                return;
+            case VK_DOWN:
+                if (buf->curs_y == buf->y_len - 1) return;
+                if (buf->curs_x > w_string_len(*(buf->ch_array + buf->curs_y + 1)))
+                    buf->curs_x = w_string_len(*(buf->ch_array + buf->curs_y + 1));
+                buf->curs_y++;
+                return;
         }
     }
 

@@ -35,10 +35,12 @@ void insert_char(struct Buffer *buf, int posx, int posy, wchar_t character) {
     *(*(buf->ch_array + posy) + posx) = character;
 }
 
+// Deletes the character at the position and not behind it
 void delete_char(struct Buffer *buf, int posx, int posy) {
-    w_shift_chars_left(*(buf->ch_array + posy), buf->x_len_max, 1, posx);
+    w_shift_chars_left(*(buf->ch_array + posy), buf->x_len_max, 1, posx + 1);
 }
 
+// Places a line ahead of posy
 void insert_line(struct Buffer *buf, int posy) {
     line_check(buf, 1);
     shift_pointers_right((void **)buf->ch_array, buf->y_len_true, 1, posy + 1);
