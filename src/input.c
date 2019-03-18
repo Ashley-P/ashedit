@@ -42,10 +42,11 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
                 case 0x31: // '1'
                     control_state = CS_EDIT;
                     w_string_reset(*(command_line->ch_array), command_line->x_len_max);
-                    command_line->curs_x = 0;
                     return;
                 case 0x32: // '2'
                     control_state = CS_COMMAND;
+                    command_line->curs_x = 0;
+                    command_line->curs_y = 0;
                     return;
                 case 0x33: // '3'
                     //control_state = CS_EDIT;
@@ -166,8 +167,9 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
                 return;
             // Scrolling through previous commands
             case VK_UP:
-                if (command_line->curs_y == command_line->y_len) return;
+                if (command_line->curs_y == command_line->y_len - 1) return;
                 command_line->curs_y++;
+                command_line->curs_x++;
                 w_string_cpy(*(command_line->ch_array + command_line->curs_y), *command_line->ch_array);
                 return;
             case VK_DOWN: return;

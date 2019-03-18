@@ -83,11 +83,8 @@ int w_string_cmp2(const wchar_t *a, const wchar_t *b, const size_t sz) {
  */
 void w_string_cpy(const wchar_t *src, wchar_t *dest) {
     // Strings could be larger than MAX_BUFSIZE so we just do an infinite loop
-    for (int i = 0;; i++) {
+    for (int i = 0; *(src + i) != L'\0'; i++)
         *(dest + i) = *(src + i);
-        if (*(src + i) == L'\0')
-            break;
-    }
 }
 
 /**
