@@ -74,9 +74,11 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
                 // @NOTE : Implement Line wrapping
                 // @FIXME
                 if (state == CS_COMMAND) {
+                    if (w_string_len(*command_line->ch_array) == command_line->x_len_max - 1) return;
                     insert_char(command_line, command_line->curs_x, 0, kev.uChar.UnicodeChar);
                     command_line->curs_x++;
                 } else {
+                    if (w_string_len(*(buf->ch_array + buf->curs_y)) == buf->x_len_max - 1) return;
                     insert_char(buf, buf->curs_x, buf->curs_y, kev.uChar.UnicodeChar);
                     buf->curs_x++;
                 }
