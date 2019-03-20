@@ -160,7 +160,7 @@ struct Buffer *init_buffer(FILE *handle) {
         *(tmp + i) = calloc(MAX_BUFSIZE_MINI, sizeof(wchar_t));
 
     buf->ch_array   = tmp;
-    buf->x_len_max  = MAX_BUFSIZE_MINI;
+    buf->x_len_max  = MAX_BUFSIZE_MINI - 1;
     buf->y_len_true = MAX_BUFSIZE_TINY;
     buf->y_len      = 1;
 

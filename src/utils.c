@@ -140,12 +140,15 @@ void w_shift_chars_right(wchar_t *str, size_t sz, int shift_len, int shift_pos) 
 
 void w_shift_chars_left(wchar_t *str, size_t sz, int shift_len, int shift_pos) {
     for (int i = shift_pos; i <= sz; i++) {
-        if (i + shift_len >= sz) continue;
-        //else *(str + i) = *(str + i + shift_len);
+        //if (i + shift_len >= sz) continue;
+        if (i - shift_len < 0) continue;
         else *(str + i - shift_len) = *(str + i);
     }
 
-    *(str + sz - 1) = L'\0';
+    for (int i = 0; i < shift_len; i++) {
+        *(str + sz - 1 - i) = L'\0';
+    }
+
 }
 
 int w_ch_in_str(const wchar_t ch, const wchar_t *str) {

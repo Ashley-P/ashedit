@@ -72,7 +72,6 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
             case VK_SPACE:
             case 0xE2:          // Backslash
                 // @NOTE : Implement Line wrapping
-                // @FIXME
                 if (state == CS_COMMAND) {
                     if (w_string_len(*command_line->ch_array) == command_line->x_len_max - 1) return;
                     insert_char(command_line, command_line->curs_x, 0, kev.uChar.UnicodeChar);
