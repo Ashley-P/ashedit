@@ -13,11 +13,17 @@ void draw_char(int x, int y, wchar_t character, unsigned char colour) {
     (screen + x + (y * SCREENWIDTH))->Attributes       = colour;
 }
 
-void draw_chars(int x, int y, const wchar_t *chars, unsigned char colour) {
-    for (int i = 0;; i++) {
-        if (*(chars + i) == L'\0') break;
-        else draw_char(x + i, y, *(chars + i), colour);
-    }
+void draw_chars(int x, int y, const wchar_t *chars, int len, unsigned char colour) {
+    if (len == 0)
+        for (int i = 0;; i++) {
+            if (*(chars + i) == L'\0') break;
+            else draw_char(x + i, y, *(chars + i), colour);
+        }
+    else
+        for (int i = 0; i < len; i++) {
+            if (*(chars + i) == L'\0') break;
+            else draw_char(x + i, y, *(chars + i), colour);
+        }
 }
 
 void draw_char_line(int x, int y, wchar_t character, int len, unsigned char colour, int direction) {

@@ -65,7 +65,8 @@ void draw_ui() {
         for (j = 0; j < win->height; j++) {
             // Start from the offset
             if ((j + win->text_offset) >= buf->y_len) break;
-            draw_chars(win->x + x_offset, win->y + j, *(buf->ch_array + win->text_offset + j), + 0x07);
+            draw_chars(win->x + x_offset, win->y + j, *(buf->ch_array + win->text_offset + j),
+                  win->width - x_offset, 0x07);
         }
 
         // Draw Tildes on the rest of the window
@@ -76,13 +77,13 @@ void draw_ui() {
         // Drawing the bottom border of the window
         change_colours(win->x, win->y + win->height, win->width, 0x70, DIR_H);
         if (w_string_cmp(buf->fn_relative, L"\0"))
-            draw_chars(win->x, win->y + win->height, L"New File", 0x70);
+            draw_chars(win->x, win->y + win->height, L"New File", win->width - x_offset, 0x70);
         else
-            draw_chars(win->x, win->y + win->height, buf->fn_relative, 0x70);
+            draw_chars(win->x, win->y + win->height, buf->fn_relative, win->width - x_offset, 0x70);
     }
 
     // Draw the command line
-    draw_chars(0, SCREENHEIGHT - 1, *(command_line->ch_array), 0x07);
+    draw_chars(0, SCREENHEIGHT - 1, *(command_line->ch_array), SCREENWIDTH - 1, 0x07);
 
     // Draw the cursor wherever it's supposed to be
     if (control_state == CS_EDIT) {

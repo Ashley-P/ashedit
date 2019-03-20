@@ -95,7 +95,7 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
                     buf->curs_x = w_string_len(*(buf->ch_array + buf->curs_y - 1));
                     w_string_cat(*(buf->ch_array + buf->curs_y), *(buf->ch_array + buf->curs_y - 1),
                             buf->x_len_max, buf->x_len_max);
-                    delete_line(buf, buf->curs_y);
+                    delete_line(buf, buf->curs_y + 1);
                     buf->curs_y--;
                 } else {
                     delete_char(buf, buf->curs_x - 1, buf->curs_y); 

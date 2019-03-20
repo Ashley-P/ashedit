@@ -35,7 +35,7 @@ void shift_pointers_left(void **ptr, size_t sz, int shift_len, int shift_pos) {
         free(*(ptr + shift_pos - i));
 
     for (int i = shift_pos; i < sz; i++) {
-        if (i - shift_len <= 0) continue;
+        if (i - shift_len < 0) continue;
         else *(ptr + i - shift_len) = *(ptr + i);
     }
 
@@ -111,7 +111,7 @@ void w_string_cat(wchar_t *src, wchar_t *dest, size_t src_sz, size_t dest_sz) {
 
     for (int i = 0; i < src_sz || i + dest_len < dest_sz; i++) {
         *(dest + i + dest_len) = *(src + i);
-        *(src + i) = L'\0';
+        //*(src + i) = L'\0';
     }
 }
 
