@@ -1,6 +1,7 @@
 #include <windows.h>
 #include "commands.h"
 #include "defs.h"
+#include "interpreter.h"
 #include "text.h"
 #include "utils.h"
 
@@ -152,7 +153,7 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
                 }
                 return;
             case VK_RETURN:
-                // Command intepreter would be called here
+                interpreter(*command_line->ch_array);
                 command_line->curs_x = 0;
                 command_line->curs_y = 0;
                 shift_pointers_right((void **) command_line->ch_array, command_line->y_len_true, 1, 0);

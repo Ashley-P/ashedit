@@ -1,3 +1,11 @@
+enum LexerState {
+    LS_NULL = 0,
+
+    LS_START = 0x1,
+    LS_MID  = 0x2,
+    LS_END  = 0x4,
+};
+
 enum TokenType {
     TT_NULL = 0,
     TT_COMMAND = 0x1,
@@ -16,3 +24,6 @@ struct Token {
     wchar_t *value;
     enum TokenType type;
 };
+
+
+void interpreter(wchar_t *line);
