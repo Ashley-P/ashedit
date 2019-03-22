@@ -82,8 +82,15 @@ int w_string_cmp2(const wchar_t *a, const wchar_t *b, const size_t sz) {
  * Undefined behaviour if src is larger than dest
  */
 void w_string_cpy(const wchar_t *src, wchar_t *dest) {
-    // Strings could be larger than MAX_BUFSIZE so we just do an infinite loop
     for (int i = 0; *(src + i) != L'\0'; i++)
+        *(dest + i) = *(src + i);
+}
+
+/**
+ *  Same as w_string_cpy except it only copies upto len
+ */
+void w_string_cpy2(const wchar_t *src, wchar_t *dest, int len) {
+    for (int i = 0; *(src + i) != L'\0' && i < len; i++)
         *(dest + i) = *(src + i);
 }
 

@@ -11,6 +11,7 @@ void shift_pointers_left(void **ptr, size_t sz, int shift_len, int shift_pos);
 int w_string_cmp(const wchar_t *a, const wchar_t *b);
 int w_string_cmp2(const wchar_t *a, const wchar_t *b, const size_t sz);
 void w_string_cpy(const wchar_t *src, wchar_t *dest);
+void w_string_cpy2(const wchar_t *src, wchar_t *dest, int len);
 int w_string_len(const wchar_t *str);
 void w_string_reset(wchar_t *str, size_t sz);
 void w_string_cat(wchar_t *src, wchar_t *dest, size_t src_sz, size_t dest_sz);
