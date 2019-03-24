@@ -89,7 +89,7 @@ void draw_ui() {
 
     // If view_global_message != 0 then we draw the message, otherwise we draw the command line
     if (view_global_message == 1) 
-        draw_chars(0, SCREENHEIGHT - 1, global_message, SCREENWIDTH - 1, 0x07);
+        draw_chars(0, SCREENHEIGHT - 1, global_message, SCREENWIDTH - 1, global_message_colour);
     else
         draw_chars(0, SCREENHEIGHT - 1, *(command_line->ch_array), SCREENWIDTH - 1, 0x07);
 
