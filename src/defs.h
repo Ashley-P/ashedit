@@ -108,4 +108,6 @@ extern int isRunning; // Whether the program is running or not
 extern struct Buffer *command_line;
 extern enum ControlState control_state;
 
+extern int view_global_message;
+
 #endif

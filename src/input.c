@@ -35,6 +35,8 @@ void handle_keys(KEY_EVENT_RECORD kev, enum ControlState state) {
     // Immediate return if it's not a press
     if (!kev.bKeyDown) return;
 
+    view_global_message = 0;
+
     // If statements allow for fall through
     // Shared Presses
     if (state & CS_ANY) {

@@ -2,6 +2,7 @@
  * This file handles the intepreter for the command line
  */
 #include "defs.h"
+#include "text.h"
 #include "interpreter.h"
 #include "utils.h"
 
@@ -129,7 +130,10 @@ error:
     return tokens;
 }
 
-void parser(struct Token *tokens) {}
+void parser(struct Token *tokens) {
+    // Just a test
+    set_global_message(L"Parser called!", 0x02);
+}
 
 void interpreter(wchar_t *line) {
     struct Token *tokens = lexer(line);

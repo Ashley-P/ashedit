@@ -18,6 +18,11 @@ size_t w_len;
 // The current active window
 struct Window *active_win;
 
+// A string that get's displayed where the command line is without being interactable
+wchar_t global_message[MAX_BUFSIZE_SMALL];
+unsigned char global_message_colour;
+int view_global_message;
+
 /**
  * Checks and modifies text_offset in each window depending on what curs_y is and the
  * size of the window
@@ -82,23 +87,26 @@ void draw_ui() {
             draw_chars(win->x, win->y + win->height, buf->fn_relative, win->width - x_offset, 0x70);
     }
 
-    // Draw the command line
-    draw_chars(0, SCREENHEIGHT - 1, *(command_line->ch_array), SCREENWIDTH - 1, 0x07);
+    // If view_global_message != 0 then we draw the message, otherwise we draw the command line
+    if (view_global_message == 1) 
+        draw_chars(0, SCREENHEIGHT - 1, global_message, SCREENWIDTH - 1, 0x07);
+    else
+        draw_chars(0, SCREENHEIGHT - 1, *(command_line->ch_array), SCREENWIDTH - 1, 0x07);
 
     // Draw the cursor wherever it's supposed to be
     if (control_state == CS_EDIT) {
-    struct Window *win = active_win;
-    struct Buffer *buf = win->buffer;
+        struct Window *win = active_win;
+        struct Buffer *buf = win->buffer;
 
-    if (win->x == 0)
-        x_offset = 0;
-    else
-        x_offset = 1;
+        if (win->x == 0)
+            x_offset = 0;
+        else
+            x_offset = 1;
 
-    //if ((buf->ch_array)[curs_y][curs_x])
-    change_colours(win->x + buf->curs_x + x_offset,
-            win->y + buf->curs_y - win->text_offset, 1, 0x78, DIR_H);
-    } else if (control_state == CS_COMMAND)
+        //if ((buf->ch_array)[curs_y][curs_x])
+        change_colours(win->x + buf->curs_x + x_offset,
+                win->y + buf->curs_y - win->text_offset, 1, 0x78, DIR_H);
+    } else if (control_state == CS_COMMAND && view_global_message != 1)
         change_colours(command_line->curs_x, SCREENHEIGHT - 1, 1, 0x78, DIR_H);
 }
 
@@ -113,14 +121,33 @@ void redraw_screen() {
                         &SMALLRECTsize);
 }
 
+// Sets the global message to the provided argument and sets it to be viewed
+void set_global_message(wchar_t *message, unsigned char colour) {
+    // Resetting it from last time
+    w_string_reset(global_message, MAX_BUFSIZE_SMALL);
+    /**
+     * @NOTE : No check to see if the message is larger than MAX_BUFSIZE_SMALL 
+     * But there is probably no need since this is called by me
+     */
+    w_string_cpy(message, global_message);
+    global_message_colour = colour;
+    view_global_message = 1;
+    return;
+}
 
-// Initialises the global lists
+/**
+ * Used to only initialise global lists, but now initialises file wide variables
+ */
 void init_lists() {
     b_len = 0;
     w_len = 0;
     buffers = calloc(MAX_BUFSIZE_TINY, sizeof(struct Buffer *));
     windows = calloc(MAX_BUFSIZE_TINY, sizeof(struct Window *));
     active_win = NULL;
+
+    w_string_reset(global_message, MAX_BUFSIZE_SMALL); // No idea if this is required or not
+    global_message_colour = 0x07;
+    view_global_message = 0;
 }
 
 // Initialises the special command line buffer
@@ -188,6 +215,7 @@ struct Buffer *init_buffer(FILE *handle) {
 }
 
 void deinit_buffer(struct Buffer *buf) {
+    // @FIXME : No check to see if it's the last buffer
     // Freeing up the text
     for (int i = 0; i < buf->y_len_true; i++)
         free(*((buf->ch_array) + i));
