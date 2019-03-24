@@ -1,6 +1,7 @@
 /**
  * This file handles the intepreter for the command line
  */
+//#include <stdio.h>
 #include "defs.h"
 #include "text.h"
 #include "interpreter.h"
@@ -91,6 +92,7 @@ struct Token *lexer(wchar_t *line) {
                         goto error;
                     } else T_VALUE[a++] = ch;
                 }
+                ch = scanner_getch(line);
 
             // Integers
             } else if (is_digit(ch)) {
@@ -99,8 +101,7 @@ struct Token *lexer(wchar_t *line) {
                     T_VALUE[a++] = ch;
                 }
                 // Peek ahead to see if the string is correct
-                wchar_t peek = scanner_peek(line);
-                if (peek != L'\0' && peek != L' ') {
+                if (ch != L'\0' && ch != L' ') {
                     // Error Message
                     goto error;
                 }
@@ -131,17 +132,27 @@ error:
 }
 
 void parser(struct Token *tokens) {
-    // Just a test
-    set_global_message(L"Parser called!", 0x02);
+    // Big if else statement for all the commands
+    if (w_string_cmp(tokens->value, L"save")) {
+        set_global_message(L"NOT IMPLEMENTED", 0x0B);
+
+    } else if (w_string_cmp(tokens->value, L"save")) {
+
+    } else { // Otherwise it's an unknown command and we should send a message
+        set_global_message(L"Unknown command \"%s\"", 0x04, tokens->value);
+    } 
 }
 
 void interpreter(wchar_t *line) {
     struct Token *tokens = lexer(line);
+
     // Check here to see if the lexer return with an error
-    parser(tokens);
+    if (tokens->type == TT_NULL)
+        // @FIXME: Make a proper display of the error
+        set_global_message(L"Lexer error!", 0x04);
+    else
+        parser(tokens);
 
-
-cleanup:
     deinit_tokens(tokens);
     scanner_pos = 0;
 }

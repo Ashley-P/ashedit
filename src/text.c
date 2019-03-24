@@ -4,6 +4,7 @@
  * along with handling their usage
  */
 
+#include <stdarg.h>
 #include <stdio.h>
 #include "defs.h"
 #include "draw_utils.h"
@@ -122,14 +123,20 @@ void redraw_screen() {
 }
 
 // Sets the global message to the provided argument and sets it to be viewed
-void set_global_message(wchar_t *message, unsigned char colour) {
+void set_global_message(wchar_t *message, unsigned char colour, ...) {
     // Resetting it from last time
     w_string_reset(global_message, MAX_BUFSIZE_SMALL);
+    // Create a string from the extra arguments
+    va_list args;  
+    va_start(args, colour);
+    //wchar_t *new_str = (wchar_t *)malloc(sizeof(wchar_t) * MAX_BUFSIZE_SMALL);
+    vswprintf(global_message, message, args);
+ 
     /**
      * @NOTE : No check to see if the message is larger than MAX_BUFSIZE_SMALL 
      * But there is probably no need since this is called by me
      */
-    w_string_cpy(message, global_message);
+    //w_string_cpy(message, global_message);
     global_message_colour = colour;
     view_global_message = 1;
     return;
