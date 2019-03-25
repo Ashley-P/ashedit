@@ -97,8 +97,9 @@ struct Token *lexer(const wchar_t *line) {
             // Integers
             } else if (is_digit(ch)) {
                 T_TYPE = TT_ARG_INT;
-                while(is_digit(ch = scanner_getch(line))) {
+                while(is_digit(ch)) {
                     T_VALUE[a++] = ch;
+                    ch = scanner_getch(line);
                 }
                 // Peek ahead to see if the string is correct
                 if (ch != L'\0' && ch != L' ') {
@@ -108,7 +109,7 @@ struct Token *lexer(const wchar_t *line) {
             // Normal args and keywords
             } else {
                 T_TYPE = TT_ARG_STD;
-                ch = scanner_getch(line);
+                //ch = scanner_getch(line);
                 while (ch != L'\0' && ch != L' ') {
                     T_VALUE[a++] = ch;
                     ch = scanner_getch(line);
@@ -155,15 +156,19 @@ void parser(const struct Token *tokens) {
          * If there is no argument then we try saving to fn_absolute/fn_relative
          * If those don't exist then we put up an error
          */
-        enum TokenType arr[] = {TT_ARG_STR, TT_EOL};
-        enum TokenType arr2[] = {TT_EOL};
+        enum TokenType arr1[] = {TT_ARG_STR, TT_EOL};
+        enum TokenType arr2[] = {TT_KEYWORD, TT_EOL};
+        enum TokenType arr3[] = {TT_EOL};
         const struct Buffer *buf = get_active_buffer();
-        if (argument_checker(tokens, arr)) {
+        if (argument_checker(tokens, arr1)) {
             // @TODO: If the file saves sucessfuly copy the new filename into fn_*
             // @FIXME: Can't save relative filenames properly
             save((const wchar_t **) buf->ch_array, buf->y_len, (tokens + 1)->value);
 
         } else if (argument_checker(tokens, arr2)) {
+            set_global_message(L"Keyword!", 0x07);
+
+        } else if (argument_checker(tokens, arr3)) {
             // Check if fn_absolute exists
             if (*buf->fn_absolute != L'\0')
                 save((const wchar_t **) buf->ch_array, buf->y_len, buf->fn_absolute);
