@@ -209,7 +209,6 @@ struct Buffer *init_buffer(FILE *handle) {
     */
     w_string_reset(buf->fn_relative, MAX_BUFSIZE_LARGE);
     w_string_reset(buf->fn_absolute, MAX_BUFSIZE_LARGE);
-    buf->handle = NULL;
 
     buf->curs_x = 0;
     buf->curs_y = 0;
@@ -227,10 +226,6 @@ void deinit_buffer(struct Buffer *buf) {
     for (int i = 0; i < buf->y_len_true; i++)
         free(*((buf->ch_array) + i));
     free(buf->ch_array);
-
-    // Closing the file if it hasn't been closed already
-    if (buf->handle)
-        fclose(buf->handle);
 
     free(buf);
 }

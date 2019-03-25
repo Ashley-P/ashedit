@@ -3,6 +3,8 @@
  * including basic things such as entering text along with all the command line stuff
  */
 
+#include <stdio.h>
+#include "text.h"
 #include "commands.h"
 #include "utils.h"
 
@@ -58,4 +60,25 @@ void delete_line(struct Buffer *buf, int posy) {
     *(buf->ch_array + buf->y_len_true - 1) = calloc(buf->x_len_max, sizeof(wchar_t));
 
     buf->y_len--;
+}
+
+/**
+ * Saves memory at the pointer to a file
+ * This is a lower level function that should be called by other functions
+ */
+int save(const wchar_t **text, int len, const wchar_t *fn) {
+    FILE *f = _wfopen(fn, L"w");
+
+    if (!f) {
+        set_global_message(L"Could not open %s for writing", 0x04);
+        return 0;
+    }
+    // Start writing to file
+    for (int i = 0; i < len; i++)
+        //fputws(*(text + i), f);
+        fwprintf(f, L"%ls\n", *(text + i));
+
+    set_global_message(L"File \"%s\" successfully saved", 0x07, fn);
+    fclose(f);
+    return 1;
 }

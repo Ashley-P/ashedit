@@ -1,7 +1,7 @@
 /**
  * This file handles the intepreter for the command line
  */
-//#include <stdio.h>
+#include "commands.h"
 #include "defs.h"
 #include "text.h"
 #include "interpreter.h"
@@ -30,11 +30,11 @@ static inline void deinit_tokens(struct Token *tokens) {
     free(tokens);
 }
 
-static inline wchar_t scanner_getch(wchar_t *line) {
+static inline wchar_t scanner_getch(const wchar_t *line) {
     return *(line + scanner_pos++);
 }
 
-static inline wchar_t scanner_peek(wchar_t *line) {
+static inline wchar_t scanner_peek(const wchar_t *line) {
     return *(line + scanner_pos + 1);
 }
 
@@ -42,7 +42,7 @@ static inline wchar_t scanner_peek(wchar_t *line) {
 #define T_VALUE (tokens + token_num)->value
 #define T_TYPE  (tokens + token_num)->type
 
-struct Token *lexer(wchar_t *line) {
+struct Token *lexer(const wchar_t *line) {
     lexer_state = LS_START;
     struct Token *tokens = init_tokens();
     int a = 0;
@@ -131,13 +131,62 @@ error:
     return tokens;
 }
 
-void parser(struct Token *tokens) {
+/**
+ * Checks the arguments of a token list based on the provided enum list
+ * Note that TT_COMMAND shouldn't be in the types
+ * TT_EOL has to be in the types or else bad stuff will happen because it's required
+ * to know the end of the list (like '\0')
+ */
+int argument_checker(const struct Token *tokens, const enum TokenType *types) {
+    for (int i = 0;; i++) {
+        if ((tokens + i + 1)->type == TT_EOL && *(types + i) == TT_EOL) return 1;
+        else if ((tokens + i + 1)->type == TT_EOL || *(types + i) == TT_EOL) return 0;
+        else if ((tokens + i + 1)->type != *(types + i)) return 0;
+        else continue;
+    }
+}
+
+void parser(const struct Token *tokens) {
     // Big if else statement for all the commands
     if (w_string_cmp(tokens->value, L"save")) {
+        /**
+         * Right now we just save the active buffer to a file
+         * If there is a second argument then we try saving to that
+         * If there is no argument then we try saving to fn_absolute/fn_relative
+         * If those don't exist then we put up an error
+         */
+        enum TokenType arr[] = {TT_ARG_STR, TT_EOL};
+        enum TokenType arr2[] = {TT_EOL};
+        const struct Buffer *buf = get_active_buffer();
+        if (argument_checker(tokens, arr)) {
+            // @TODO: If the file saves sucessfuly copy the new filename into fn_*
+            // @FIXME: Can't save relative filenames properly
+            save((const wchar_t **) buf->ch_array, buf->y_len, (tokens + 1)->value);
+
+        } else if (argument_checker(tokens, arr2)) {
+            // Check if fn_absolute exists
+            if (*buf->fn_absolute != L'\0')
+                save((const wchar_t **) buf->ch_array, buf->y_len, buf->fn_absolute);
+            else // If we get here then there is no file name in the argument or saved in the buffer
+                set_global_message(L"No filename provided for buffer", 0x07);
+
+        } else
+            // @TODO: Should probably expand this error a bit more
+            set_global_message(L"Incorrect number or type of arguments", 0x04);
+
+
+    } else if (w_string_cmp(tokens->value, L"load")) {
         set_global_message(L"NOT IMPLEMENTED", 0x0B);
 
-    } else if (w_string_cmp(tokens->value, L"save")) {
+    } else if (w_string_cmp(tokens->value, L"split")) {
+        set_global_message(L"NOT IMPLEMENTED", 0x0B);
 
+    } else if (w_string_cmp(tokens->value, L"vsplit")) {
+        set_global_message(L"NOT IMPLEMENTED", 0x0B);
+
+    } else if (w_string_cmp(tokens->value, L"man")) { // manual/help
+        set_global_message(L"NOT IMPLEMENTED", 0x0B);
+        
     } else { // Otherwise it's an unknown command and we should send a message
         set_global_message(L"Unknown command \"%s\"", 0x04, tokens->value);
     } 

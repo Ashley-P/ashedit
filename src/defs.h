@@ -70,8 +70,6 @@ struct Buffer {
     // Filenames
     wchar_t fn_relative[MAX_BUFSIZE_LARGE];
     wchar_t fn_absolute[MAX_BUFSIZE_LARGE];
-    FILE *handle;
-
 
     // Cursor stuff
     int curs_x;

@@ -13,3 +13,6 @@ src/obj/*.o
 
 # Logging files
 bin/logs/*.log
+
+# Txt files that are in bin/test
+bin/test/*
