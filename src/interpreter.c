@@ -165,8 +165,11 @@ void parser(const struct Token *tokens) {
             // @FIXME: Can't save relative filenames properly
             save((const wchar_t **) buf->ch_array, buf->y_len, (tokens + 1)->value);
 
-        } else if (argument_checker(tokens, arr2)) {
+        } else if (argument_checker(tokens, arr2)) { // For the keyword "ALL"
+            if (w_string_cmp((tokens + 1)->value, L"ALL")) {
             set_global_message(L"Keyword!", 0x07);
+            } else
+                set_global_message(L"Wrong Keyword!", 0x07);
 
         } else if (argument_checker(tokens, arr3)) {
             // Check if fn_absolute exists
@@ -177,7 +180,7 @@ void parser(const struct Token *tokens) {
 
         } else
             // @TODO: Should probably expand this error a bit more
-            set_global_message(L"Incorrect number or type of arguments", 0x04);
+            set_global_message(L"Incorrect number and/or type of arguments", 0x04);
 
 
     } else if (w_string_cmp(tokens->value, L"load")) {
