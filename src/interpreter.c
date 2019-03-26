@@ -189,6 +189,7 @@ void parser(const struct Token *tokens) {
         /**
          * We need to create a buffer to load a file and a quick check on the arguments
          * @TODO: Modify to able to accept a ton of arguments and load them all
+         * @TODO: Make the load also set fn_relative/absolute
          */ 
         enum TokenType arr1[] = {TT_ARG_STR, TT_EOL};
         if (argument_checker(tokens, arr1)) {
@@ -215,14 +216,23 @@ void parser(const struct Token *tokens) {
         struct Window *active_win = get_active_window();
         struct Window *new_win    = init_window(active_win->buffer,
                                                 active_win->x,
-                                                active_win->y + active_win->height / 2,
+                                                (int) active_win->y + active_win->height / 2,
                                                 active_win->width,
-                                                active_win->height / 2);
+                                                (int) active_win->height / 2);
         active_win->height = new_win->y - 1;
 
     } else if (w_string_cmp(tokens->value, L"vsplit")) {
-        set_global_message(L"NOT IMPLEMENTED", 0x0B);
+        struct Window *active_win = get_active_window();
+        struct Window *new_win    = init_window(active_win->buffer,
+                                                (int) active_win->x + active_win->width / 2,
+                                                active_win->y,
+                                                (int) active_win->width / 2,
+                                                active_win->height);
+        active_win->width = new_win->x;
 
+    } else if (w_string_cmp(tokens->value, L"close")) { // Closes the current window
+        set_global_message(L"NOT IMPLEMENTED", 0x0B);
+        
     } else if (w_string_cmp(tokens->value, L"man")) { // manual/help
         set_global_message(L"NOT IMPLEMENTED", 0x0B);
         

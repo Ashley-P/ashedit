@@ -61,7 +61,7 @@ void draw_ui() {
             x_offset = 0;
         else {
             // Draw the vertical bar that would seperate the window
-            draw_char_line(win->x, win->y, LIGHT_HORIZONTAL, win->height, 0x70, DIR_H);
+            draw_char_line(win->x, win->y, LIGHT_VERTICAL, win->height, 0x70, DIR_V);
             x_offset = 1;
         }
 
