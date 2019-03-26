@@ -28,19 +28,17 @@ int view_global_message;
  * Checks and modifies text_offset in each window depending on what curs_y is and the
  * size of the window
  */
-void text_offset_check() {
-    for (int i = 0; i < w_len; i++) {
-        struct Window *win = *(windows + i);
-        struct Buffer *buf = win->buffer;
+static inline void text_offset_check() {
+    struct Window *win = active_win;
+    struct Buffer *buf = win->buffer;
 
-        if (buf->curs_y < win->text_offset) {
-            if (buf->curs_y == 0)
-                win->text_offset = 0;
-            else
-                win->text_offset = buf->curs_y - 1;
-        } else if (buf->curs_y > win->text_offset + win->height - 1)
-            win->text_offset = buf->curs_y - win->height + 1;
-    }
+    if (buf->curs_y < win->text_offset) {
+        if (buf->curs_y == 0)
+            win->text_offset = 0;
+        else
+            win->text_offset = buf->curs_y - 1;
+    } else if (buf->curs_y > win->text_offset + win->height - 1)
+        win->text_offset = buf->curs_y - win->height + 1;
 }
 
 /**
@@ -48,8 +46,9 @@ void text_offset_check() {
  * @NOTE : Implement Line wrapping
  */
 void draw_ui() {
-    // Bottom row is for typing commands so it's left blank
+    // Set the text_offset for the active window
     text_offset_check();
+
 
     // Each window has a bottom bar and a left bar
     // There is no left bar if the win->x is 0
