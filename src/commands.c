@@ -66,19 +66,41 @@ void delete_line(struct Buffer *buf, int posy) {
  * Saves memory at the pointer to a file
  * This is a lower level function that should be called by other functions
  */
-int save(const wchar_t **text, int len, const wchar_t *fn) {
+int save(const wchar_t **text, int y_len, const wchar_t *fn) {
     FILE *f = _wfopen(fn, L"w");
 
     if (!f) {
-        set_global_message(L"Could not open %s for writing", 0x04);
+        set_global_message(L"Could not open %ls for writing", 0x04, fn);
         return 0;
     }
     // Start writing to file
-    for (int i = 0; i < len; i++)
+    // fwprintf is used so we can append a newline to each string
+    for (int i = 0; i < y_len; i++)
         //fputws(*(text + i), f);
         fwprintf(f, L"%ls\n", *(text + i));
 
-    set_global_message(L"File \"%s\" successfully saved", 0x07, fn);
+    set_global_message(L"File \"%ls\" successfully saved", 0x07, fn);
+    fclose(f);
+    return 1;
+}
+
+int load(wchar_t **text, int x_len, const wchar_t *fn) {
+    FILE *f = _wfopen(fn, L"r");
+
+    if (!f) {
+        set_global_message(L"Could not open %ls for reading", 0x04, fn);
+        return 0;
+    }
+
+    // Start reading from the file
+    int i = 0;
+    while (fgetws(*(text + i), x_len, f) != NULL) {
+        // strip the newlines from the string
+        w_shift_chars_left(*(text + i), x_len, 1, w_string_len(*(text + i)) + 1);
+        i++;
+    }
+
+    set_global_message(L"File \"%ls\" succesfully loaded", 0x07, fn);
     fclose(f);
     return 1;
 }

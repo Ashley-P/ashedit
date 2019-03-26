@@ -6,6 +6,8 @@
 int power(int base, unsigned int expt);
 void shift_pointers_right(void **ptr, size_t sz, int shift_len, int shift_pos);
 void shift_pointers_left(void **ptr, size_t sz, int shift_len, int shift_pos);
+int w_lines_in_file(const wchar_t *fn);
+int w_widest_line_in_file(const wchar_t *fn);
 
 /* String utility functions */
 int w_string_cmp(const wchar_t *a, const wchar_t *b);

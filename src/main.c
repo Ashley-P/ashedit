@@ -45,7 +45,7 @@ int main() {
     command_line = init_command_line();
 
     // Setting up the very first buffer and window
-    struct Buffer *buf = init_buffer(NULL);
+    struct Buffer *buf = init_buffer(0, 0);
     init_window(buf, 0); // The second arg doesn't matter
 
 

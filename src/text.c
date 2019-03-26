@@ -178,11 +178,10 @@ struct Buffer *init_command_line() {
 
 /**
  * Initialises a buffer
- * Most of the values are set programatically so nothing is required in the arguments
- * @NOTE : init doesn't open a file automatically but deinit closes on if there is one
- * @NOTE : Implement construction if a file handle is provided
+ * x_len_max and y_len are for presseting the size of ch_array, mainly for loading files
+ * They can both be 0 and will be set to a preset size
  */
-struct Buffer *init_buffer(FILE *handle) {
+struct Buffer *init_buffer(int x_len_max, int y_len_true) {
     struct Buffer *buf = malloc(sizeof(struct Buffer));
 
     /**
@@ -190,23 +189,25 @@ struct Buffer *init_buffer(FILE *handle) {
      * x_len_max is MAX_BUFSIZE_MINI (64)
      * y_len_true is MAX_BUFSIZE_TINY (16)
      */
-    wchar_t **tmp = calloc(MAX_BUFSIZE_TINY, sizeof(wchar_t *));
-    for (int i = 0; i < MAX_BUFSIZE_TINY; i++)
-        *(tmp + i) = calloc(MAX_BUFSIZE_MINI, sizeof(wchar_t));
+    if (x_len_max > MAX_BUFSIZE_MINI)
+        buf->x_len_max = x_len_max;
+    else
+        buf->x_len_max  = MAX_BUFSIZE_MINI;
+
+    if (y_len_true) {
+        buf->y_len      = y_len_true;
+        buf->y_len_true = y_len_true;
+    } else {
+        buf->y_len      = 1;
+        buf->y_len_true = MAX_BUFSIZE_TINY;
+    }
+
+    wchar_t **tmp = calloc(buf->y_len_true, sizeof(wchar_t *));
+    for (int i = 0; i < buf->y_len_true; i++)
+        *(tmp + i) = calloc(buf->x_len_max, sizeof(wchar_t));
 
     buf->ch_array   = tmp;
-    buf->x_len_max  = MAX_BUFSIZE_MINI - 1;
-    buf->y_len_true = MAX_BUFSIZE_TINY;
-    buf->y_len      = 1;
 
-    //w_string_cpy(L"\0", buf->fn_relative);
-    //w_string_cpy(L"\0", buf->fn_absolute);
-    /*
-    for (int i = 0; i < MAX_BUFSIZE_LARGE; i++) {
-        *(buf->fn_relative + i) = L'\0';
-        *(buf->fn_absolute + i) = L'\0';
-    }
-    */
     w_string_reset(buf->fn_relative, MAX_BUFSIZE_LARGE);
     w_string_reset(buf->fn_absolute, MAX_BUFSIZE_LARGE);
 
@@ -234,7 +235,7 @@ void deinit_buffer(struct Buffer *buf) {
  * Initialises a Window struct
  * If no buffer is provided then an empty one is created
  * DIR_V splits the current window in half vertically and DIR_H horizontally
- * @NOTE : Actually finish this function
+ * @TODO : Actually finish this function
  */
 struct Window *init_window(struct Buffer *buf, int direction) {
     struct Window *win = malloc(sizeof(struct Window));

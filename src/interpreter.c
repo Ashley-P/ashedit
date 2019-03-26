@@ -162,19 +162,21 @@ void parser(const struct Token *tokens) {
         const struct Buffer *buf = get_active_buffer();
         if (argument_checker(tokens, arr1)) {
             // @TODO: If the file saves sucessfuly copy the new filename into fn_*
-            // @FIXME: Can't save relative filenames properly
             save((const wchar_t **) buf->ch_array, buf->y_len, (tokens + 1)->value);
 
         } else if (argument_checker(tokens, arr2)) { // For the keyword "ALL"
             if (w_string_cmp((tokens + 1)->value, L"ALL")) {
-            set_global_message(L"Keyword!", 0x07);
+                // Here we would cycle through all the buffers and try saving them
+                set_global_message(L"Keyword!", 0x07);
             } else
                 set_global_message(L"Wrong Keyword!", 0x07);
 
         } else if (argument_checker(tokens, arr3)) {
-            // Check if fn_absolute exists
+            // Check if fn_absolute or fn_relative exists
             if (*buf->fn_absolute != L'\0')
                 save((const wchar_t **) buf->ch_array, buf->y_len, buf->fn_absolute);
+            if (*buf->fn_relative != L'\0')
+                save((const wchar_t **) buf->ch_array, buf->y_len, buf->fn_relative);
             else // If we get here then there is no file name in the argument or saved in the buffer
                 set_global_message(L"No filename provided for buffer", 0x07);
 
@@ -184,7 +186,25 @@ void parser(const struct Token *tokens) {
 
 
     } else if (w_string_cmp(tokens->value, L"load")) {
-        set_global_message(L"NOT IMPLEMENTED", 0x0B);
+        /**
+         * We need to create a buffer to load a file and a quick check on the arguments
+         * @TODO: Modify to able to accept a ton of arguments and load them all
+         */ 
+        enum TokenType arr1[] = {TT_ARG_STR, TT_EOL};
+        if (argument_checker(tokens, arr1)) {
+            // Find the y_len and x_len_max of the file
+            // @FIXME: Buffer kind of just stays around even if the file doesn't exist
+            int y_cnt = w_lines_in_file((tokens + 1)->value);
+            int x_cnt  = w_widest_line_in_file((tokens + 1)->value);
+            struct Buffer *buf = init_buffer(x_cnt, y_cnt);
+            load(buf->ch_array, buf->x_len_max, (tokens + 1)->value);
+            // Set the buffer in the active window
+            struct Window *active_win = get_active_window();
+            active_win->buffer = buf;
+
+        } else
+            // @TODO: Should probably expand this error a bit more
+            set_global_message(L"Incorrect number and/or type of arguments", 0x04);
 
     } else if (w_string_cmp(tokens->value, L"split")) {
         set_global_message(L"NOT IMPLEMENTED", 0x0B);

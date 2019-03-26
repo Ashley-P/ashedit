@@ -44,6 +44,38 @@ void shift_pointers_left(void **ptr, size_t sz, int shift_len, int shift_pos) {
         *(ptr + sz - 1 - i) = NULL;
 }
 
+int w_lines_in_file(const wchar_t *fn) {
+    FILE *f = _wfopen(fn, L"r");
+    if (!f) return -1;
+
+    int cnt = 0;
+    wchar_t ch;
+    while ((ch = fgetwc(f)) != WEOF) {
+        if (ch == L'\n') cnt++;
+    }
+
+    return cnt;
+}
+
+int w_widest_line_in_file(const wchar_t *fn) {
+    FILE *f = _wfopen(fn, L"r");
+    if (!f) return -1;
+
+    int cnt = 0;
+    int max = 0;
+    wchar_t ch;
+    while ((ch = fgetwc(f)) != WEOF) {
+        if (ch != L'\n' && ch != L'\0')
+            cnt++;
+        else {
+            max = max > cnt ? max : cnt;
+            cnt = 0;
+        }
+    }
+
+    return max;
+}
+
 /********* String utility functions *********/
 /**
  * wchar_t string comparing
