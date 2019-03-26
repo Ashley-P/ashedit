@@ -25,7 +25,7 @@ unsigned char global_message_colour;
 int view_global_message;
 
 /**
- * Checks and modifies text_offset in each window depending on what curs_y is and the
+ * Checks and modifies text_offset in the active window depending on what curs_y is and the
  * size of the window
  */
 static inline void text_offset_check() {
@@ -94,19 +94,19 @@ void draw_ui() {
         draw_chars(0, SCREENHEIGHT - 1, *(command_line->ch_array), SCREENWIDTH - 1, 0x07);
 
     // Draw the cursor wherever it's supposed to be
-    if (control_state == CS_EDIT) {
-        struct Window *win = active_win;
-        struct Buffer *buf = win->buffer;
+    //if (control_state == CS_EDIT) {
+    struct Window *win = active_win;
+    struct Buffer *buf = win->buffer;
 
-        if (win->x == 0)
-            x_offset = 0;
-        else
-            x_offset = 1;
+    if (win->x == 0)
+        x_offset = 0;
+    else
+        x_offset = 1;
 
-        //if ((buf->ch_array)[curs_y][curs_x])
-        change_colours(win->x + buf->curs_x + x_offset,
-                win->y + buf->curs_y - win->text_offset, 1, 0x78, DIR_H);
-    } else if (control_state == CS_COMMAND && view_global_message != 1)
+    //if ((buf->ch_array)[curs_y][curs_x])
+    change_colours(win->x + buf->curs_x + x_offset,
+            win->y + buf->curs_y - win->text_offset, 1, 0x78, DIR_H);
+    if (control_state == CS_COMMAND && view_global_message != 1)
         change_colours(command_line->curs_x, SCREENHEIGHT - 1, 1, 0x78, DIR_H);
 }
 
