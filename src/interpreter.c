@@ -193,14 +193,19 @@ void parser(const struct Token *tokens) {
         enum TokenType arr1[] = {TT_ARG_STR, TT_EOL};
         if (argument_checker(tokens, arr1)) {
             // Find the y_len and x_len_max of the file
-            // @FIXME: Buffer kind of just stays around even if the file doesn't exist
             int y_cnt = w_lines_in_file((tokens + 1)->value);
             int x_cnt  = w_widest_line_in_file((tokens + 1)->value);
+
             struct Buffer *buf = init_buffer(x_cnt, y_cnt);
-            load(buf->ch_array, buf->x_len_max, (tokens + 1)->value);
+            int a = load(buf->ch_array, buf->x_len_max, (tokens + 1)->value);
+
+            if (!a)
+                deinit_buffer(buf);
+            else {
             // Set the buffer in the active window
             struct Window *active_win = get_active_window();
             active_win->buffer = buf;
+            }
 
         } else
             // @TODO: Should probably expand this error a bit more
