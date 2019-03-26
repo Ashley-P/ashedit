@@ -46,7 +46,7 @@ int main() {
 
     // Setting up the very first buffer and window
     struct Buffer *buf = init_buffer(0, 0);
-    init_window(buf, 0); // The second arg doesn't matter
+    init_window(buf, 0, 0, SCREENWIDTH, SCREENHEIGHT - 2); // Main window
 
 
     while (isRunning) {

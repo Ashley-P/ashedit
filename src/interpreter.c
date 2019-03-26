@@ -212,12 +212,21 @@ void parser(const struct Token *tokens) {
             set_global_message(L"Incorrect number and/or type of arguments", 0x04);
 
     } else if (w_string_cmp(tokens->value, L"split")) {
-        set_global_message(L"NOT IMPLEMENTED", 0x0B);
+        struct Window *active_win = get_active_window();
+        struct Window *new_win    = init_window(active_win->buffer,
+                                                active_win->x,
+                                                active_win->y + active_win->height / 2,
+                                                active_win->width,
+                                                active_win->height / 2);
+        active_win->height = new_win->y - 1;
 
     } else if (w_string_cmp(tokens->value, L"vsplit")) {
         set_global_message(L"NOT IMPLEMENTED", 0x0B);
 
     } else if (w_string_cmp(tokens->value, L"man")) { // manual/help
+        set_global_message(L"NOT IMPLEMENTED", 0x0B);
+        
+    } else if (w_string_cmp(tokens->value, L"buffers")) { // Lists the available buffers/switches buffers
         set_global_message(L"NOT IMPLEMENTED", 0x0B);
         
     } else { // Otherwise it's an unknown command and we should send a message

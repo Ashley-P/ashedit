@@ -237,20 +237,19 @@ void deinit_buffer(struct Buffer *buf) {
  * DIR_V splits the current window in half vertically and DIR_H horizontally
  * @TODO : Actually finish this function
  */
-struct Window *init_window(struct Buffer *buf, int direction) {
+struct Window *init_window(struct Buffer *buf, int x, int y, int width, int height) {
     struct Window *win = malloc(sizeof(struct Window));
 
     // If active_win is NULL then it's likely to be the first window that is created
-    if (!active_win) {
+    if (!active_win)
         active_win = win;
-        win->x           = 0;
-        win->y           = 0;
-        win->width       = SCREENWIDTH;
-        win->height      = SCREENHEIGHT - 2;
-        win->buffer      = buf;
-        win->text_offset = 0;
-    } else {
-    }
+
+    win->x           = x;
+    win->y           = y;
+    win->width       = width;
+    win->height      = height;
+    win->buffer      = buf;
+    win->text_offset = 0;
 
     // Add the window to the list
     *(windows + w_len) = win;
