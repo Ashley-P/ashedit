@@ -12,5 +12,7 @@ void deinit_window(struct Window *win);
 struct Window *get_active_window();
 void set_active_window(struct Window *win);
 struct Buffer *get_active_buffer();
+const struct Window **get_window_list();
+struct Window *get_adjacent_win(const struct Window *win, int direction);
 
 #endif

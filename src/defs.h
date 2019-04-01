@@ -16,6 +16,12 @@
 #define DIR_H 1
 #define DIR_V 2
 
+#define DIR_LEFT   1
+#define DIR_RIGHT  2
+#define DIR_UP     3
+#define DIR_DOWN   4
+
+
 #define MAX_BUFSIZE_TINY  16
 #define MAX_BUFSIZE_MINI  64
 #define MAX_BUFSIZE_SMALL 256
@@ -71,7 +77,7 @@ struct Buffer {
     wchar_t fn_relative[MAX_BUFSIZE_LARGE];
     wchar_t fn_absolute[MAX_BUFSIZE_LARGE];
 
-    // Cursor stuff
+    // Cursor stuff @NOTE @TODO: Should probably attach this to the window rather than the buffer
     int curs_x;
     int curs_y;
 

@@ -273,3 +273,57 @@ void set_active_window(struct Window *win) {
 struct Buffer *get_active_buffer() {
     return active_win->buffer;
 }
+
+const struct Window **get_window_list() {
+    return (const struct Window **) windows;
+}
+
+
+/**
+ * Finds what window is underneath the x and y value
+ */
+struct Window *find_window(int x, int y) {
+    for (int i = 0; i < w_len; i++) {
+        struct Window *win = *(windows + i);
+        if (x >= win->x && x <= win->x + win->width &&
+            y >= win->y && y <= win->y + win->height)
+            return win;
+
+    }
+
+    // If we get here then the cursor is likely on the command line or something, which isn't a window
+    return NULL;
+}
+
+/**
+ * Finds a window adjacent to the window in the direction provided based on the cursor position
+ * returns NULL if it couldn't find one
+ */
+struct Window *get_adjacent_win(const struct Window *win, int direction) {
+    int x = win->buffer->curs_x + win->x;
+    int y = win->buffer->curs_y + win->y;
+
+    if (direction == DIR_LEFT) {
+        while (x >= 0) {
+            if (find_window(x, y) == active_win) x--;
+            else return find_window(x, y);
+        }
+    } else if (direction == DIR_RIGHT) {
+        while (x <= SCREENWIDTH) {
+            if (find_window(x, y) == active_win) x++;
+            else return find_window(x, y);
+        }
+    } else if (direction == DIR_UP) {
+        while (y >= 0) {
+            if (find_window(x, y) == active_win) y--;
+            else return find_window(x, y);
+        }
+    } else if (direction == DIR_DOWN) {
+        while (y <= SCREENHEIGHT) {
+            if (find_window(x, y) == active_win) y++;
+            else return find_window(x, y);
+        }
+    }
+
+    return NULL;
+}
